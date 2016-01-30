@@ -37,12 +37,12 @@ func (bus *Bus) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		for scanner.Scan() {
 			msg := scanner.Text()
 			if len(msg) > 0 {
-				fmt.Fprintln(os.Stdout, msg)
-				err := os.Stdout.Sync()
-				if err != nil {
-					log.Fatal(err)
-					return
-				}
+				//fmt.Fprintln(os.Stdout, msg)
+				//err := os.Stdout.Sync()
+				//if err != nil {
+				//	log.Fatal(err)
+				//	return
+				//}
 
 				bus.Notifier <- []byte(msg)
 				fmt.Fprintln(rw, msg)
@@ -170,6 +170,6 @@ func main() {
 
 	watchStdin(bus)
 
-	log.Fatal("HTTP server error: ", http.ListenAndServe("localhost:8080", bus))
+	log.Fatal("HTTP server error: ", http.ListenAndServe(":3000", bus))
 
 }
