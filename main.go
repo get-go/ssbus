@@ -170,6 +170,6 @@ func main() {
 
 	watchStdin(bus)
 
-	log.Fatal("HTTP server error: ", http.ListenAndServe("localhost:8080", bus))
+	log.Fatal("HTTP server error: ", http.ListenAndServe("localhost:3000", bus))
 
 }
