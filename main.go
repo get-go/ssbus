@@ -37,12 +37,8 @@ func (bus *Bus) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		for scanner.Scan() {
 			msg := scanner.Text()
 			if len(msg) > 0 {
-				//fmt.Fprintln(os.Stdout, msg)
-				//err := os.Stdout.Sync()
-				//if err != nil {
-				//	log.Fatal(err)
-				//	return
-				//}
+				fmt.Fprintln(os.Stdout, msg)
+				os.Stdout.Sync()
 
 				bus.Notifier <- []byte(msg)
 				fmt.Fprintln(rw, msg)
