@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 // ListenAndServe implements 'http.ListenAndServe'
@@ -12,6 +13,12 @@ func (bus *Bus) ListenAndServe(addr string) error {
 }
 
 func (bus *Bus) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+
+	if !strings.HasPrefix(req.URL.Path, "/_") {
+		fmt.Fprintf(bus, "Bad request. Path: %s", req.URL.Path)
+		http.NotFound(rw, req)
+		return
+	}
 
 	if req.Method == "POST" {
 		// Post a message to the channels
@@ -23,7 +30,7 @@ func (bus *Bus) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 			msg := scanner.Text()
 			if len(msg) > 0 {
 				bus.Notifier <- []byte(msg)
-				fmt.Fprintf(rw, "Success! Message: \"%s\"\n", msg)
+				fmt.Fprintf(rw, "Success! Message sent: \"%s\"", msg)
 			}
 		}
 		return

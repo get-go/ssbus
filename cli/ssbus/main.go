@@ -11,10 +11,11 @@ import (
 	"github.com/get-go/ssbus"
 )
 
-var stdin = flag.Bool("stdin", false, "Accept input on Standard In, SSBUS_STDIN")
-var quiet = flag.Bool("quiet", false, "Quiet down the Standard Out messages, SSBUS_QUIET")
-var addr = flag.String("address", ":8675", "Address to listen on, SSBUS_ADDRESS")
-var logFile = flag.String("logfile", "", "File to save logs to, SSBUS_LOGFILE")
+var stdin = flag.Bool("stdin", false, "Accept input on Standard In")
+var quiet = flag.Bool("quiet", false, "Quiet down the Standard Out messages")
+var addr = flag.String("address", ":8675", "Address to listen on")
+var logFile = flag.String("logfile", "", "File to save logs to")
+var prefix = flag.String("prefix", "[ssbus]", "Prefix for server messages")
 
 func main() {
 	flag.Parse()
@@ -30,7 +31,7 @@ func main() {
 		//Throw in go func to watch continuously
 		for sig := range c {
 			if sig == os.Interrupt {
-				fmt.Fprintln(bus, "Interrupt Signal caught, exiting.")
+				fmt.Fprintf(bus, "%s Interrupt Signal caught, exiting.\n", bus.Prefix)
 				os.Exit(0)
 			}
 		}
@@ -67,7 +68,8 @@ func main() {
 	}
 
 	//Send initial status messages
-	fmt.Fprintln(bus, "Starting Stupid Simple Bus service")
+	fmt.Fprintf(bus, "%s Starting Stupid Simple Bus service\n", bus.Prefix)
+	defer fmt.Fprintf(bus, "%s Stopping Stupid Simple Bus service\n", bus.Prefix)
 
 	//Start an HTTP server, on the specified address
 	//This is blocking, and will return an error when done

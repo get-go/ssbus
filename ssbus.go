@@ -9,6 +9,9 @@ import (
 // Notifier channel, and broadcast event data to all registered connections.
 type Bus struct {
 
+	// Prefix for the server status messages
+	Prefix string
+
 	// Events are pushed to this channel by the main events-gathering routine
 	Notifier chan []byte
 
@@ -32,7 +35,7 @@ func (bus *Bus) Listen(w io.Writer) {
 				bus.clients[s] = true
 
 				if w != nil {
-					fmt.Fprintln(w, "Client Added")
+					fmt.Fprintf(w, "%s Client Added\n", bus.Prefix)
 				}
 
 			case s := <-bus.closingClients:
@@ -40,7 +43,7 @@ func (bus *Bus) Listen(w io.Writer) {
 				delete(bus.clients, s)
 
 				if w != nil {
-					fmt.Fprintln(w, "Client Removed")
+					fmt.Fprintf(w, "%s Client Removed\n", bus.Prefix)
 				}
 
 			case msg := <-bus.Notifier:
@@ -50,7 +53,7 @@ func (bus *Bus) Listen(w io.Writer) {
 				}
 
 				if w != nil {
-					fmt.Fprintf(w, "Message: \"%s\"\n", string(msg))
+					fmt.Fprintln(w, string(msg))
 				}
 			}
 		}
@@ -69,5 +72,6 @@ func New() *Bus {
 		newClients:     make(chan chan []byte),
 		closingClients: make(chan chan []byte),
 		clients:        make(map[chan []byte]bool),
+		Prefix:         "[ssbus]",
 	}
 }
