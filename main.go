@@ -7,8 +7,6 @@ import (
 	"io"
 	"os"
 	"os/signal"
-
-	"github.com/get-go/ssbus"
 )
 
 var stdin = flag.Bool("stdin", false, "Accept input on Standard In")
@@ -21,7 +19,7 @@ func main() {
 	flag.Parse()
 
 	//Make us a new bus
-	bus := ssbus.New()
+	bus := New()
 
 	//Watch for a close 'os.Signal'
 	c := make(chan os.Signal, 1)

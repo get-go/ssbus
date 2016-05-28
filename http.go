@@ -1,4 +1,4 @@
-package ssbus
+package main
 
 import (
 	"bufio"
